@@ -8,19 +8,12 @@ interface Props {
   onDone: (prefs: UserPreferences) => void;
 }
 
-type Step = 'mood' | 'toy' | 'toyType' | 'comfort' | 'names';
+type Step = 'mood' | 'toy' | 'comfort' | 'names';
 
 const MOODS = [
   { value: 'relaxed' as const, label: 'רגועה', icon: '🧘‍♀️', desc: 'רוצה להתחיל לאט ובנעימות' },
   { value: 'curious' as const, label: 'סקרנית', icon: '✨', desc: 'פתוחה לגלות דברים חדשים' },
   { value: 'needy' as const, label: 'חסרה לי', icon: '🔥', desc: 'כבר מרגישה צורך' },
-];
-
-const TOY_TYPES = [
-  { value: 'vibrator' as const, label: 'ויברטור', icon: '💜' },
-  { value: 'clitoral' as const, label: 'קליטוראלי', icon: '🌸', desc: 'Satisfyer / Womanizer' },
-  { value: 'dildo' as const, label: 'דילדו', icon: '💗' },
-  { value: 'other' as const, label: 'אחר', icon: '✨' },
 ];
 
 const COMFORT_LEVELS = [
@@ -33,7 +26,6 @@ export default function PreferencesScreen({ onDone }: Props) {
   const [step, setStep] = useState<Step>('mood');
   const [mood, setMood] = useState<UserPreferences['mood']>('relaxed');
   const [hasToy, setHasToy] = useState(false);
-  const [toyType, setToyType] = useState<UserPreferences['toyType']>();
   const [comfortLevel, setComfortLevel] = useState<UserPreferences['comfortLevel']>('moderate');
   const [name, setName] = useState('');
   const [partnerName, setPartnerName] = useState('');
@@ -43,7 +35,7 @@ export default function PreferencesScreen({ onDone }: Props) {
       name: name.trim(),
       mood,
       hasToy,
-      toyType: hasToy ? toyType : undefined,
+      toyType: undefined,
       comfortLevel,
       partnerName: partnerName.trim() || undefined,
     });
@@ -84,7 +76,7 @@ export default function PreferencesScreen({ onDone }: Props) {
               <h2 className="text-2xl font-light text-center text-white mb-2">יש לך צעצוע?</h2>
               <p className="text-center text-white/40 text-sm mb-2">ההנחיות יותאמו בהתאם</p>
               <div className="flex flex-col gap-3">
-                <GlassCard onClick={() => { setHasToy(true); setStep('toyType'); }}>
+                <GlassCard onClick={() => { setHasToy(true); setStep('comfort'); }}>
                   <div className="flex items-center gap-4">
                     <span className="text-3xl">💜</span>
                     <div>
@@ -102,29 +94,6 @@ export default function PreferencesScreen({ onDone }: Props) {
                     </div>
                   </div>
                 </GlassCard>
-              </div>
-            </div>
-          )}
-
-          {/* Step: Toy type */}
-          {step === 'toyType' && (
-            <div className="animate-fade-in flex flex-col gap-4">
-              <h2 className="text-2xl font-light text-center text-white mb-2">איזה סוג?</h2>
-              <div className="flex flex-col gap-3">
-                {TOY_TYPES.map(t => (
-                  <GlassCard
-                    key={t.value}
-                    onClick={() => { setToyType(t.value); setStep('comfort'); }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-2xl">{t.icon}</span>
-                      <div>
-                        <p className="text-white text-lg">{t.label}</p>
-                        {t.desc && <p className="text-white/40 text-sm">{t.desc}</p>}
-                      </div>
-                    </div>
-                  </GlassCard>
-                ))}
               </div>
             </div>
           )}

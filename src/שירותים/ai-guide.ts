@@ -14,7 +14,7 @@ function getAI(): GoogleGenerativeAI | null {
 }
 
 function fallbackResponse(phase: Phase, tension: number, stepIndex: number, hasToy: boolean): AIGuideResponse {
-  const content = getFallbackStep(phase, stepIndex);
+  const content = getFallbackStep(phase, stepIndex, hasToy);
   const newTension = Math.min(100, tension + 7);
   const nextPhase: Phase =
     newTension >= 75 ? 'FIRE' :
@@ -27,7 +27,6 @@ function fallbackResponse(phase: Phase, tension: number, stepIndex: number, hasT
     whisper: content.whisper,
     encouragement: content.encouragement,
     nextAction: 'כשתרגישי מוכנה, לחצי ממשיכה',
-    toyTip: hasToy ? 'השתמשי בצעצוע שלך בעוצמה שנוחה לך' : undefined,
     bodyArea: content.bodyArea,
     breathPattern: phase === 'ICE' ? 'שאפי עמוק... נשפי לאט...' : undefined,
     tension: newTension,

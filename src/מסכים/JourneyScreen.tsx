@@ -94,15 +94,6 @@ export default function JourneyScreen({ preferences, onCallHim }: Props) {
     }
   }, [preferences]);
 
-  const skipPhase = useCallback(() => {
-    const curPhase = phaseRef.current;
-    const nextTension = curPhase === 'WARM' ? 50 : curPhase === 'HOT' ? 75 : 95;
-    const nextPhase = getPhaseFromTension(nextTension);
-    setTension(nextTension);
-    setPhase(nextPhase);
-    loadGuidance(nextTension, nextPhase);
-  }, [loadGuidance]);
-
   const slowDown = useCallback(() => {
     const newTension = Math.max(0, tensionRef.current - 8);
     setTension(newTension);
@@ -113,17 +104,17 @@ export default function JourneyScreen({ preferences, onCallHim }: Props) {
     <div className="relative h-full flex flex-col">
       <AmbientBackground phase={phase} />
 
-      {/* Floating "Call Him" button — always visible */}
+      {/* Floating "Call Him" button — bottom-left on mobile */}
       {tension >= 30 && (
         <button
           onClick={onCallHim}
-          className="fixed left-4 top-1/2 -translate-y-1/2 z-50
+          className="fixed left-4 bottom-6 z-50
             bg-warm-pink/20 hover:bg-warm-pink/40 backdrop-blur-md
-            border border-warm-pink/30 rounded-full px-3 py-4
+            border border-warm-pink/30 rounded-full px-4 py-2.5
             text-white/70 hover:text-white text-xs
             transition-all duration-300 hover:scale-105
             shadow-lg shadow-warm-pink/10"
-          style={{ writingMode: 'vertical-rl' }}
+          style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom, 0px))' }}
         >
           קראי לו →
         </button>
@@ -213,20 +204,15 @@ export default function JourneyScreen({ preferences, onCallHim }: Props) {
         </div>
 
         {/* Bottom actions */}
-        <div className="pb-8 px-5">
+        <div className="px-5" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 0px))' }}>
           <div className="max-w-md mx-auto flex flex-col gap-3">
             <ActionButton onClick={() => loadGuidance()} disabled={loading} className="w-full">
               ממשיכה
             </ActionButton>
 
-            <div className="flex gap-3">
-              <ActionButton onClick={loadMore} variant="secondary" disabled={loading} className="flex-1">
-                עוד מזה
-              </ActionButton>
-              <ActionButton onClick={skipPhase} variant="secondary" disabled={loading || phase === 'FIRE'} className="flex-1">
-                ?שנעבור שלב
-              </ActionButton>
-            </div>
+            <ActionButton onClick={loadMore} variant="secondary" disabled={loading} className="w-full">
+              עוד מזה
+            </ActionButton>
 
             <ActionButton onClick={slowDown} variant="ghost" disabled={loading} className="w-full text-sm">
               אט אט...
