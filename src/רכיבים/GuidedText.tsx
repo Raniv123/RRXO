@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface Props {
   text: string;
@@ -10,6 +10,8 @@ interface Props {
 export default function GuidedText({ text, speed = 80, className = '', onDone }: Props) {
   const [visibleWords, setVisibleWords] = useState(0);
   const words = text.split(' ');
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
     setVisibleWords(0);
@@ -17,12 +19,12 @@ export default function GuidedText({ text, speed = 80, className = '', onDone }:
 
   useEffect(() => {
     if (visibleWords >= words.length) {
-      onDone?.();
+      onDoneRef.current?.();
       return;
     }
     const timer = setTimeout(() => setVisibleWords(v => v + 1), speed);
     return () => clearTimeout(timer);
-  }, [visibleWords, words.length, speed, onDone]);
+  }, [visibleWords, words.length, speed]);
 
   return (
     <p className={`leading-relaxed ${className}`}>

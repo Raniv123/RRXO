@@ -27,13 +27,14 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 export default function JourneyScreen({ preferences, onCallHim }: Props) {
-  const [phase, setPhase] = useState<Phase>('WARM');
-  const [tension, setTension] = useState(20);
+  const [phase, setPhase] = useState<Phase>('ICE');
+  const [tension, setTension] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
   const [history, setHistory] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState<AIGuideResponse | null>(null);
   const [textDone, setTextDone] = useState(false);
+  const mountedRef = useRef(false);
 
   // Refs to always have latest values in callbacks
   const tensionRef = useRef(tension);
@@ -73,8 +74,10 @@ export default function JourneyScreen({ preferences, onCallHim }: Props) {
     }
   }, [preferences, onCallHim]);
 
-  // Load first guidance on mount
+  // Load first guidance on mount (guard against StrictMode double-fire)
   useEffect(() => {
+    if (mountedRef.current) return;
+    mountedRef.current = true;
     loadGuidance();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

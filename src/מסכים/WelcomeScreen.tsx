@@ -12,9 +12,10 @@ export default function WelcomeScreen({ onStart }: Props) {
   const [showBtn, setShowBtn] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setShow(true), 300);
-    setTimeout(() => setShowSub(true), 1200);
-    setTimeout(() => setShowBtn(true), 2200);
+    const t1 = setTimeout(() => setShow(true), 300);
+    const t2 = setTimeout(() => setShowSub(true), 1200);
+    const t3 = setTimeout(() => setShowBtn(true), 2200);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   return (

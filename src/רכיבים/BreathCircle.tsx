@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface Props {
   onComplete: () => void;
@@ -24,37 +24,47 @@ export default function BreathCircle({ onComplete, totalRounds = 3 }: Props) {
   const [phase, setPhase] = useState<BreathPhase>('inhale');
   const [round, setRound] = useState(1);
   const [scale, setScale] = useState(0.8);
+  const completedRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const nextPhase = useCallback(() => {
-    setPhase(prev => {
-      if (prev === 'inhale') {
-        setScale(1.2);
-        return 'hold';
-      }
-      if (prev === 'hold') {
-        return 'exhale';
-      }
-      // exhale done
-      if (round >= totalRounds) {
-        setPhase('done');
-        setTimeout(onComplete, 800);
-        return 'done';
-      }
-      setRound(r => r + 1);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  const roundRef = useRef(round);
+  roundRef.current = round;
+
+  const advance = useCallback((currentPhase: BreathPhase) => {
+    if (currentPhase === 'inhale') {
+      setScale(1.2);
+      setPhase('hold');
+    } else if (currentPhase === 'hold') {
       setScale(0.8);
-      return 'inhale';
-    });
-  }, [round, totalRounds, onComplete]);
+      setPhase('exhale');
+    } else if (currentPhase === 'exhale') {
+      if (roundRef.current >= totalRounds) {
+        if (!completedRef.current) {
+          completedRef.current = true;
+          setPhase('done');
+          setTimeout(() => onCompleteRef.current(), 800);
+        }
+      } else {
+        setRound(r => r + 1);
+        setScale(0.8);
+        setPhase('inhale');
+      }
+    }
+  }, [totalRounds]);
 
   useEffect(() => {
     if (phase === 'done') return;
 
     if (phase === 'inhale') setScale(1.2);
-    if (phase === 'exhale') setScale(0.8);
 
-    const timer = setTimeout(nextPhase, DURATIONS[phase]);
-    return () => clearTimeout(timer);
-  }, [phase, nextPhase]);
+    timerRef.current = setTimeout(() => advance(phase), DURATIONS[phase]);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [phase, advance]);
 
   if (phase === 'done') {
     return (
@@ -69,7 +79,6 @@ export default function BreathCircle({ onComplete, totalRounds = 3 }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      {/* Circle */}
       <div
         className="w-48 h-48 rounded-full flex items-center justify-center transition-transform duration-[4000ms] ease-in-out"
         style={{
@@ -84,7 +93,6 @@ export default function BreathCircle({ onComplete, totalRounds = 3 }: Props) {
         </span>
       </div>
 
-      {/* Round counter */}
       <div className="text-white/30 text-sm">
         {round} / {totalRounds}
       </div>
