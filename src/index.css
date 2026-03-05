@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  font-family: 'Heebo', sans-serif;
+  background: #050510;
+  color: white;
+  direction: rtl;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent zoom on input focus (iOS) */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 121, 249, 0.3);
+  border-radius: 999px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(232, 121, 249, 0.25);
+  color: white;
+}
+
+/* Glass card */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+}
+
+/* Action button */
+.action-btn {
+  background: linear-gradient(135deg, rgba(180,40,80,0.85), rgba(120,20,60,0.95));
+  box-shadow: 0 0 50px rgba(180,40,80,0.35), 0 4px 20px rgba(0,0,0,0.5);
+  border: 1px solid rgba(180,40,80,0.4);
+  transition: all 0.3s ease;
+}
+.action-btn:hover {
+  box-shadow: 0 0 70px rgba(180,40,80,0.5), 0 4px 30px rgba(0,0,0,0.6);
+  transform: translateY(-2px);
+}
+.action-btn:active {
+  transform: translateY(0);
+}
+
+/* Secondary button */
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s ease;
+}
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Phase backgrounds */
+.bg-ice {
+  background: radial-gradient(ellipse at 30% 40%, #0d0820 0%, #050510 50%, #0a0a14 100%);
+}
+.bg-warm {
+  background: radial-gradient(ellipse at 40% 50%, #1a0530 0%, #0d0520 40%, #0a0a14 100%);
+}
+.bg-hot {
+  background: radial-gradient(ellipse at 50% 60%, #2a0520 0%, #1a0818 40%, #0a0a14 100%);
+}
+.bg-fire {
+  background: radial-gradient(ellipse at 50% 50%, #3a0818 0%, #2a0510 35%, #0a0a14 100%);
+}
+
+/* Breath circle */
+.breath-expand {
+  animation: breathExpand 16s ease-in-out infinite;
+}
+@keyframes breathExpand {
+  0%   { transform: scale(0.8); opacity: 0.5; }
+  25%  { transform: scale(1.2); opacity: 0.9; }  /* inhale 4s */
+  50%  { transform: scale(1.2); opacity: 0.9; }  /* hold 4s */
+  100% { transform: scale(0.8); opacity: 0.5; }  /* exhale 8s */
+}
+
+/* Guided text word animation */
+.word-appear {
+  animation: wordAppear 0.4s ease-out forwards;
+  opacity: 0;
+}
+@keyframes wordAppear {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Floating particles */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Safe area for iPhone notch */
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
