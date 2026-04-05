@@ -20,6 +20,13 @@ export default function BreathScreen({ onComplete }: Props) {
         <p className="text-sm text-white/25 animate-fade-in-slow">
           עצמי עיניים ותתני לגוף להירגע
         </p>
+
+        <button
+          onClick={onComplete}
+          className="text-white/20 hover:text-white/40 text-xs transition-colors mt-4"
+        >
+          דלגי →
+        </button>
       </div>
     </div>
   );

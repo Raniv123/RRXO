@@ -5,7 +5,7 @@ interface Props {
   onUnlock: () => void;
 }
 
-const CORRECT_PIN = '1900';
+const CORRECT_PIN = '2626';
 
 export default function PasswordScreen({ onUnlock }: Props) {
   const [pin, setPin] = useState('');

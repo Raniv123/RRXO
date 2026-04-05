@@ -25,7 +25,7 @@ export default function BreathCircle({ onComplete, totalRounds = 3 }: Props) {
   const [round, setRound] = useState(1);
   const [scale, setScale] = useState(0.8);
   const completedRef = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;

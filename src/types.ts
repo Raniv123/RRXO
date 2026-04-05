@@ -1,14 +1,9 @@
-export type Screen = 'PASSWORD' | 'WELCOME' | 'PREFERENCES' | 'BREATH' | 'JOURNEY' | 'CALL_HIM';
+export type Screen = 'GIFT_BOX' | 'PASSWORD' | 'WELCOME' | 'BREATH' | 'JOURNEY' | 'CALL_HIM';
 
 export type Phase = 'ICE' | 'WARM' | 'HOT' | 'FIRE';
 
 export interface UserPreferences {
-  name: string;
-  mood: 'relaxed' | 'curious' | 'needy';
   hasToy: boolean;
-  toyType?: 'vibrator' | 'dildo' | 'clitoral' | 'other';
-  comfortLevel: 'gentle' | 'moderate' | 'intense';
-  partnerName?: string;
 }
 
 export interface GuidedStep {
@@ -24,13 +19,9 @@ export interface GuidedStep {
 
 export interface AIGuideResponse {
   currentInstruction: string;
-  detailedGuidance: string;
+  task: string;
   whisper: string;
-  encouragement: string;
-  nextAction: string;
-  toyTip?: string;
   bodyArea: string;
-  breathPattern?: string;
   tension: number;
   phase: Phase;
   readyToCall: boolean;

@@ -2,86 +2,56 @@
 
 ## מה הפרויקט עושה
 אפליקציית ווב לאשה בלבד — מסע חושני אישי מודרך שמחמם אותה בהדרגה עד שהיא מוכנה לקרוא לבן הזוג.
-בסגנון RRX3 אבל ללא סנכרון — רק היא לבד עם מנחה AI.
+פנטזיות אנונימיות + הנחיות פיזיות מבוססות מחקר. הכל client-side, פרטיות מלאה.
 
-## טכנולוגיות ותלויות
+## טכנולוגיות
 - **שפה:** TypeScript
 - **Framework:** React 19 + Vite 6
 - **עיצוב:** Tailwind CSS 3.4
 - **AI:** Google Gemini (gemini-2.0-flash) + Fallback סטטי
-- **אודיו:** Web Audio API (מוזיקה אמביינטית)
+- **Deploy:** GitHub Pages (`https://raniv123.github.io/RRXO/`)
 - **כיוון:** RTL מלא, עברית, פונט Heebo
 
-## מבנה הפרויקט
-```
-src/
-├── מסכים/          5 מסכים (Welcome, Preferences, Breath, Journey, CallHim)
-├── רכיבים/         7 קומפוננטות (GlassCard, ActionButton, AmbientBackground, etc.)
-├── שירותים/        2 שירותים (ai-guide, audio-service)
-├── נתונים/         3 קבצי נתונים (prompts, guided-content, toys-data)
-├── App.tsx         State machine
-├── types.ts        טיפוסים
-└── index.css       Tailwind + אנימציות
-```
+## זרימה
+PASSWORD (1900) → WELCOME → BREATH (דלגי אפשרי) → JOURNEY (popup צעצוע באמצע WARM + סיום הדרגתי) → CALL_HIM
 
-## מה בנינו עד כה
-- מסך פתיחה חושני עם אנימציות ✅
-- מסך העדפות (מצב רוח, צעצוע, עוצמה, שמות) ✅
-- מסך נשימות (3 סבבים מונפשים) ✅
-- מסך מסע ראשי עם 4 שלבים (ICE→WARM→HOT→FIRE) ✅
-- מערכת התקדמות (tension 0-100) ✅
-- Fallback content (24 הנחיות מוכנות מראש) ✅
-- מוזיקה אמביינטית Web Audio ✅
-- מסך קריאה עם טלפון/WhatsApp ✅
-- עיצוב Glassmorphism חושני ✅
-- תמיכה במובייל מלאה ✅
+## מה בנינו
+- כל הזרימה עובדת מקצה לקצה ✅
+- 5 פנטזיות מוכנות (hotel-stranger, neighbor, art-studio, rain-alley + עוד) ✅
+- הנחיות פיזיות מבוססות מחקר (OMGYes, Betty Dodson, Nagoski) ✅
+- פרסונליזציה עם שם + שם בן זוג ✅
+- Fade-out אנימציה חלקה בין צעדים ✅
+- כפתור דלגי במסך נשימות ✅
+- מובייל responsive ✅
+- Deploy אוטומטי ל-GitHub Pages ✅
 
-## החלטות חשובות
-- **Gemini Flash ולא Pro:** מהיר וזול, מספיק טוב עם system prompt מפורט
-- **Fallback סטטי:** AI לא עובד מהדפדפן (CORS) — ה-Fallback מכסה מצוין
-- **ללא סנכרון:** בניגוד ל-RRX3, אין ntfy.sh — אפליקציה לבד
-- **ללא DB:** הכל client-side, פרטיות מלאה
+## עדכונים אחרונים (שיחה 4 — 2026-03-11)
 
-## מצב נוכחי
-### עובד ✅
-- כל הזרימה מתחילה ועד סוף
-- כל 5 המסכים
-- מעברי שלבים (ממשיכה, דילוג, אט אט)
-- Fallback content איכותי
-- עיצוב חושני ויפה
-- מובייל responsive
+### שדרוג חוויה מלא
+- הוסרו שמות (name + partnerName) — לא צריך ✅
+- PreferencesScreen נמחק ✅
+- זרימה חדשה: PASSWORD → WELCOME → BREATH → JOURNEY → CALL_HIM ✅
+- בחירת צעצוע הועברה לאמצע WARM — popup מפתה וחושני ✅
+- סיום הדרגתי: צעד אחרון מיוחד + טקסטים מתחלפים לפני מסך קריאה ✅
+- כפתור "ממשיכה" הופך ל"קראי לו..." בשלב האחרון ✅
 
-### צריך שיפור 🔧
-- Gemini AI לא עובד מהדפדפן (CORS) — צריך proxy או backend
-- אין favicon
-
-## עדכונים אחרונים (שיחה 2)
-- תוכן HOT שוכתב — 12 צעדים, דגש דגדגן, טכניקת V, ברדס, Edging כפול
-- משחק אצבעות (G-spot + דגדגן) רק בשלב מתקדם
-- הוסר Web Audio API — המשתמשת שמה מוזיקה בעצמה
-- נוסף כפתור צף "קראי לו" שמופיע מ-tension 30
-- עיצוב קולנועי: נקודות צבע במקום אמוג'ים, מינימליסטי
-- System prompt עודכן: 3 חוקי ברזל חדשים (דגדגן, הפתעות, Edging)
-
-## צעדים הבאים
-1. להוסיף proxy server ל-Gemini (אופציונלי — Fallback עובד טוב)
-2. להוסיף favicon
-3. לפרוס לשרת
+### מהשיחות הקודמות (עדיין תקף)
+- 8 פנטזיות (hotel-stranger, neighbor, art-studio, private-spa, beach-sunset, dance-lesson, intimate-dinner, rain-alley) ✅
+- הנחיות פיזיות מבוססות מחקר (OMGYes, Betty Dodson, Nagoski) ✅
+- כפתור דלגי במסך נשימות ✅
+- מובייל responsive ✅
 
 ## קבצים חשובים
-- `src/מסכים/JourneyScreen.tsx` — המסך הראשי
-- `src/נתונים/guided-content.ts` — תוכן Fallback
-- `src/נתונים/prompts.ts` — System prompt ל-AI
-- `src/שירותים/audio-service.ts` — מוזיקה
-- `.env.local` — Gemini API key
+- `src/נתונים/guided-content.ts` — פנטזיות + הנחיות פיזיות (הקובץ המרכזי!)
+- `src/שירותים/ai-guide.ts` — AI + fallback
+- `src/מסכים/JourneyScreen.tsx` — מסך המסע + popup צעצוע + סיום הדרגתי
+- `src/מסכים/BreathScreen.tsx` — נשימות + דלגי
 
-## פקודות נפוצות
-```bash
-npm run dev     # להפעלה
-npm run build   # לבנייה
-npm run preview # תצוגה מקדימה
-```
+## צעדים הבאים
+1. לבדוק ידנית את הזרימה המלאה (Playwright לא עובד כרגע)
+2. לוודא popup צעצוע מופיע באמצע WARM
+3. לוודא סיום הדרגתי עובד
 
 ---
-📅 עדכון אחרון: 2026-03-05 21:45
-💬 שיחה אחרונה: עדכון תוכן — דגדגן, Edging, כפתור צף, עיצוב קולנועי
+📅 עדכון אחרון: 2026-03-11 20:00
+💬 שיחה אחרונה: הסרת שמות, popup צעצוע באמצע WARM, סיום הדרגתי

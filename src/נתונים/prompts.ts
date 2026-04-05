@@ -19,14 +19,9 @@ const BASE_SYSTEM_PROMPT = `את "המנחה" — קול פנימי חושני, 
 
 ## הפלט — JSON בלבד:
 {
-  "currentInstruction": "2-3 משפטים — ההנחיה המרכזית עכשיו",
-  "detailedGuidance": "מה בדיוק לעשות — ספציפי, חושני",
+  "currentInstruction": "פסקה אחת זורמת — הנחיה + חוויה + תחושה. הכל בטקסט אחד שזורם כמו סיפור",
   "whisper": "משפט לחישה אחד — אינטימי ואישי",
-  "encouragement": "אפירמציה / עידוד",
-  "nextAction": "מה הצעד הבא",
-  "toyTip": "טיפ לצעצוע (null אם אין)",
   "bodyArea": "אזור בגוף",
-  "breathPattern": "נשימה מומלצת (null אם לא רלוונטי)",
   "tension": 45,
   "phase": "WARM",
   "readyToCall": false
@@ -66,31 +61,18 @@ const PHASE_INSTRUCTIONS: Record<Phase, string> = {
 
 const TOY_INSTRUCTIONS: Record<string, string> = {
   none: 'אין צעצוע — הנחיות מגע ידיים בלבד: אצבעות, כפות ידיים, עיסוי.',
-  vibrator: 'יש ויברטור — שלבי הנחיות ויברטור: עוצמות, תנועות, מיקומים.',
-  clitoral: 'יש צעצוע קליטוראלי (Satisfyer/Womanizer) — הנחיות ספציפיות: הנחה עדינה, עוצמות.',
-  dildo: 'יש דילדו — הנחיות חדירה הדרגתית + מגע חיצוני במקביל.',
-  other: 'יש צעצוע — שלבי הנחיות שימוש כלליות.'
-};
-
-const COMFORT_INSTRUCTIONS: Record<string, string> = {
-  gentle: 'עוצמה: gentle — שפה עדינה, קצב איטי, הרבה הפסקות נשימה. לא לדחוף.',
-  moderate: 'עוצמה: moderate — שפה חמה, קצב טבעי, עידוד.',
-  intense: 'עוצמה: intense — שפה ישירה, קצב מהיר, הנחיות מפורטות וגרפיות.'
+  toy: 'יש צעצוע — שלבי הנחיות שימוש: עוצמות, תנועות, מיקומים.'
 };
 
 export function buildSystemPrompt(prefs: UserPreferences): string {
-  const toyKey = prefs.hasToy ? (prefs.toyType || 'other') : 'none';
-  const nameNote = prefs.name ? `שם המשתמשת: ${prefs.name}. פני אליה בשם.` : 'אין שם — פני אליה ב"את".';
-  const partnerNote = prefs.partnerName ? `שם בן הזוג: ${prefs.partnerName}. השתמשי בשם בדמיון מודרך.` : '';
+  const toyKey = prefs.hasToy ? 'toy' : 'none';
 
   return `${BASE_SYSTEM_PROMPT}
 
-## פרטים אישיים:
-${nameNote}
-${partnerNote}
-מצב רוח: ${prefs.mood}
+## הנחיות:
+פני אליה ב"את".
 ${TOY_INSTRUCTIONS[toyKey]}
-${COMFORT_INSTRUCTIONS[prefs.comfortLevel]}`;
+עוצמה: עדין — שפה עדינה, קצב איטי, הנחיות הדרגתיות. לא לדחוף.`;
 }
 
 export function buildUserMessage(phase: Phase, tension: number, stepIndex: number, history: string[]): string {

@@ -13,24 +13,26 @@ function getAI(): GoogleGenerativeAI | null {
   return genAI;
 }
 
-function fallbackResponse(phase: Phase, tension: number, stepIndex: number, hasToy: boolean): AIGuideResponse {
-  const content = getFallbackStep(phase, stepIndex, hasToy);
-  const newTension = Math.min(100, tension + 7);
-  const nextPhase: Phase =
-    newTension >= 75 ? 'FIRE' :
-    newTension >= 50 ? 'HOT' :
-    newTension >= 25 ? 'WARM' : 'ICE';
+function getPhaseFromTension(t: number): Phase {
+  if (t >= 75) return 'FIRE';
+  if (t >= 50) return 'HOT';
+  if (t >= 25) return 'WARM';
+  return 'ICE';
+}
+
+function fallbackResponse(_phase: Phase, tension: number, stepIndex: number, prefs: UserPreferences): AIGuideResponse {
+  // Content phase is determined by current tension — smooth progression
+  const contentPhase = getPhaseFromTension(tension);
+  const content = getFallbackStep(contentPhase, stepIndex, prefs.hasToy);
+  const newTension = Math.min(100, tension + 4);
 
   return {
     currentInstruction: content.instruction,
-    detailedGuidance: content.detail,
+    task: content.task,
     whisper: content.whisper,
-    encouragement: content.encouragement,
-    nextAction: 'כשתרגישי מוכנה, לחצי ממשיכה',
     bodyArea: content.bodyArea,
-    breathPattern: phase === 'ICE' ? 'שאפי עמוק... נשפי לאט...' : undefined,
     tension: newTension,
-    phase: nextPhase,
+    phase: contentPhase,
     readyToCall: newTension >= 95
   };
 }
@@ -44,7 +46,7 @@ export async function getNextGuidance(
 ): Promise<AIGuideResponse> {
   const ai = getAI();
   if (!ai) {
-    return fallbackResponse(phase, tension, stepIndex, preferences.hasToy);
+    return fallbackResponse(phase, tension, stepIndex, preferences);
   }
 
   try {
@@ -62,7 +64,7 @@ export async function getNextGuidance(
 
     const chat = model.startChat({
       history: [{ role: 'user', parts: [{ text: 'הבנתי את התפקיד שלי. אני מוכנה להנחות.' }] },
-               { role: 'model', parts: [{ text: '{"currentInstruction":"אני כאן בשבילך. נתחיל.","detailedGuidance":"","whisper":"","encouragement":"","nextAction":"","bodyArea":"","tension":0,"phase":"ICE","readyToCall":false}' }] }],
+               { role: 'model', parts: [{ text: '{"currentInstruction":"אני כאן בשבילך. נתחיל.","whisper":"","bodyArea":"","tension":0,"phase":"ICE","readyToCall":false}' }] }],
       systemInstruction: systemPrompt,
     });
 
@@ -78,6 +80,6 @@ export async function getNextGuidance(
     return parsed;
   } catch (err) {
     console.error('AI Guide error:', err);
-    return fallbackResponse(phase, tension, stepIndex, preferences.hasToy);
+    return fallbackResponse(phase, tension, stepIndex, preferences);
   }
 }
