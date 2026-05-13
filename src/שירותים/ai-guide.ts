@@ -5,7 +5,7 @@ import { getFallbackStep } from '../נתונים/guided-content';
 // FAL acts as a proxy to OpenAI — keeps the OpenAI key out of the client bundle.
 // Using any-llm which routes to GPT-5 / GPT-4o through FAL's infra.
 const FAL_ENDPOINT = 'https://fal.run/fal-ai/any-llm';
-const MODEL = 'anthropic/claude-sonnet-4.5';
+const MODEL = 'anthropic/claude-haiku-4.5';
 
 function getFalKey(): string | null {
   const key = import.meta.env.VITE_FAL_KEY;
@@ -72,6 +72,7 @@ export async function getNextGuidance(
         model: MODEL,
         system_prompt: systemPrompt,
         prompt: userMessage,
+        max_tokens: 500,
       }),
     });
 

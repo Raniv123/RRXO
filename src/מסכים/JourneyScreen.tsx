@@ -131,6 +131,10 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
   // Track current fantasy id for ambient audio
   const [currentFantasyId, setCurrentFantasyId] = useState<string>('');
 
+  // Preloaded next response — fetched in background while she reads current
+  const preloadedRef = useRef<AIGuideResponse | null>(null);
+  const preloadingRef = useRef(false);
+
   // Refs
   const tensionRef = useRef(tension);
   const phaseRef = useRef(phase);
@@ -152,7 +156,6 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
     }
     setFading(false);
     setCurrent(null);
-    setLoading(true);
     setTextDone(false);
     setShowTermTooltip(null);
     setTimerDone(false);
@@ -160,6 +163,25 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
 
     const useTension = overrideTension ?? tensionRef.current;
     const usePhase = overridePhase ?? phaseRef.current;
+
+    // ⚡ INSTANT — if we preloaded a response while she was reading, use it now
+    const preloaded = preloadedRef.current;
+    if (preloaded && overrideTension === undefined && overridePhase === undefined) {
+      preloadedRef.current = null;
+      setCurrent(preloaded);
+      setTension(preloaded.tension);
+      setStepIndex(i => i + 1);
+      setHistory(h => [...h.slice(-15), preloaded.currentInstruction]);
+      setPhase(preloaded.phase);
+      if (!toyAsked && preloaded.tension >= 33 && preloaded.tension < 45 && preloaded.phase === 'WARM') {
+        setToyAsked(true);
+        setTimeout(() => setShowToyPopup(true), 2000);
+      }
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const response = await getNextGuidance(prefsRef.current, usePhase, useTension, stepRef.current, historyRef.current);
@@ -170,20 +192,45 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
       setHistory(h => [...h.slice(-15), response.currentInstruction]);
       setPhase(response.phase);
 
-      // Show toy popup mid-WARM
       if (!toyAsked && response.tension >= 33 && response.tension < 45 && response.phase === 'WARM') {
         setToyAsked(true);
         setTimeout(() => setShowToyPopup(true), 2000);
       }
-
-      // readyToCall → manual button shown instead of auto-advance
-      // (her choice to advance — last moment of agency)
     } catch {
       // Fallback handled in ai-guide
     } finally {
       setLoading(false);
     }
-  }, [onCallHim, toyAsked]);
+  }, [toyAsked]);
+
+  // 🚀 Preload next response in background as soon as text is done.
+  // Most of the time she's reading + doing the task, the next response is ready.
+  const preloadNext = useCallback(async () => {
+    if (preloadingRef.current || preloadedRef.current) return;
+    if (currentRef.current?.readyToCall) return;
+    preloadingRef.current = true;
+    try {
+      const response = await getNextGuidance(
+        prefsRef.current,
+        phaseRef.current,
+        tensionRef.current,
+        stepRef.current,
+        historyRef.current,
+      );
+      preloadedRef.current = response;
+    } catch {
+      preloadedRef.current = null;
+    } finally {
+      preloadingRef.current = false;
+    }
+  }, []);
+
+  // Trigger preload when text finished animating
+  useEffect(() => {
+    if (textDone && current && !current.readyToCall) {
+      preloadNext();
+    }
+  }, [textDone, current, preloadNext]);
 
   useEffect(() => {
     if (mountedRef.current) return;
