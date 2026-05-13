@@ -51,7 +51,7 @@ const SCENES = [
   },
   {
     id: 'rain-alley',
-    prompt: 'Quiet narrow alley in the rain, steady soft rainfall on pavement, distant thunder, gentle drops on rooftops, intimate cinematic atmosphere',
+    prompt: 'Cozy outdoor cafe terrace under a fabric awning during gentle rain, soft raindrops on canvas, warm muffled cafe sounds inside, soft acoustic music from inside, no thunder, intimate warm safe atmosphere',
   },
 ];
 
