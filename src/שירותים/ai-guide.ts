@@ -90,8 +90,16 @@ export async function getNextGuidance(
 
     const parsed = JSON.parse(extractJson(content)) as AIGuideResponse;
 
-    parsed.tension = Math.max(0, Math.min(100, parsed.tension ?? tension + 6));
-    if (!parsed.phase) parsed.phase = phase;
+    // 🔒 Monotonic guarantee — tension can never go backwards or stagnate.
+    // Even if the model returns weird values, we force a steady advance.
+    const aiTension = typeof parsed.tension === 'number' ? parsed.tension : tension + 6;
+    const minNext = tension + 4;
+    const maxJump = tension + 12;
+    parsed.tension = Math.max(0, Math.min(100, Math.max(minNext, Math.min(aiTension, maxJump))));
+
+    // 🔒 Always derive phase from tension (consistency: tension and phase MUST agree).
+    parsed.phase = getPhaseFromTension(parsed.tension);
+
     if (parsed.tension >= 95) parsed.readyToCall = true;
 
     return parsed;

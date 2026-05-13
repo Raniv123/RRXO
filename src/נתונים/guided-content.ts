@@ -1272,11 +1272,18 @@ export function switchFantasy(): void {
   phaseStepCounters.FIRE = 0;
 }
 
-export function getFallbackStep(phase: Phase, _index: number, hasToy = false): FallbackContent {
+export function getFallbackStep(phase: Phase, index: number, hasToy = false): FallbackContent {
   const fantasy = getRandomFantasy();
   const steps = fantasy.steps[phase];
-  const stepIdx = phaseStepCounters[phase];
-  phaseStepCounters[phase]++;
+
+  // Use the GLOBAL step index passed from JourneyScreen so the fallback
+  // never returns the intro of a phase when called mid-session.
+  // Also increment internal counter as a defensive backup.
+  const stepIdx = (typeof index === 'number' && index >= 0)
+    ? index
+    : phaseStepCounters[phase];
+  phaseStepCounters[phase] = Math.max(phaseStepCounters[phase], stepIdx) + 1;
+
   const step = steps[stepIdx % steps.length];
 
   if (hasToy && (phase === 'HOT' || phase === 'FIRE')) {

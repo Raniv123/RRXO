@@ -415,8 +415,8 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
 
         {/* Bottom actions — always available, she chooses when to continue */}
         {!showToyPopup && !current?.readyToCall && (
-          <div className="px-5" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 0px))' }}>
-            <div className="max-w-md mx-auto">
+          <div className="px-5 flex flex-col gap-2.5" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 0px))' }}>
+            <div className="max-w-md mx-auto w-full">
               <ActionButton
                 onClick={() => loadGuidance()}
                 disabled={loading}
@@ -425,6 +425,24 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
                 ממשיכה
               </ActionButton>
             </div>
+
+            {/* Early "call him" option — appears once she's warmed up */}
+            {tension >= 40 && (
+              <div className="max-w-md mx-auto w-full animate-fade-in">
+                <button
+                  onClick={onCallHim}
+                  disabled={loading}
+                  className="w-full py-2.5 rounded-2xl text-white/55 hover:text-white/85 text-xs tracking-[0.18em] transition-all duration-500"
+                  style={{
+                    background: 'rgba(236,72,153,0.06)',
+                    border: '1px solid rgba(236,72,153,0.15)',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
+                  אני מוכנה — קראי לו עכשיו
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
