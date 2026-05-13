@@ -5,7 +5,7 @@ import { getFallbackStep } from '../נתונים/guided-content';
 // FAL acts as a proxy to OpenAI — keeps the OpenAI key out of the client bundle.
 // Using any-llm which routes to GPT-5 / GPT-4o through FAL's infra.
 const FAL_ENDPOINT = 'https://fal.run/fal-ai/any-llm';
-const MODEL = 'openai/gpt-5-chat';
+const MODEL = 'anthropic/claude-sonnet-4.5';
 
 function getFalKey(): string | null {
   const key = import.meta.env.VITE_FAL_KEY;
@@ -88,7 +88,14 @@ export async function getNextGuidance(
       return fallbackResponse(phase, tension, stepIndex, preferences);
     }
 
-    const parsed = JSON.parse(extractJson(content)) as AIGuideResponse;
+    const jsonCandidate = extractJson(content);
+    // Sanity check — the response must start with { (a JSON object)
+    if (!jsonCandidate.trim().startsWith('{')) {
+      console.warn('AI returned non-JSON (likely refusal):', content.slice(0, 200));
+      return fallbackResponse(phase, tension, stepIndex, preferences);
+    }
+
+    const parsed = JSON.parse(jsonCandidate) as AIGuideResponse;
 
     // 🔒 Monotonic guarantee — tension can never go backwards or stagnate.
     // Even if the model returns weird values, we force a steady advance.

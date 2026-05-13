@@ -15,7 +15,7 @@ interface SavedNames {
 
 function loadSavedNames(): SavedNames | null {
   try {
-    const raw = localStorage.getItem('rrxo-names');
+    const raw = localStorage.getItem('rrxo-names-v2');
     if (!raw) return null;
     const parsed = JSON.parse(raw) as SavedNames;
     if (typeof parsed.user === 'string' && typeof parsed.partner === 'string'
@@ -29,7 +29,7 @@ function loadSavedNames(): SavedNames | null {
 }
 
 function saveNames(names: SavedNames) {
-  try { localStorage.setItem('rrxo-names', JSON.stringify(names)); } catch { /* ignore */ }
+  try { localStorage.setItem('rrxo-names-v2', JSON.stringify(names)); } catch { /* ignore */ }
 }
 
 function getInitialScreen(): Screen {
