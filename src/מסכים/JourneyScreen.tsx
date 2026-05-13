@@ -163,7 +163,7 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
       setCurrent(response);
       setTension(response.tension);
       setStepIndex(i => i + 1);
-      setHistory(h => [...h.slice(-5), response.currentInstruction]);
+      setHistory(h => [...h.slice(-15), response.currentInstruction]);
       setPhase(response.phase);
 
       // Show toy popup mid-WARM

@@ -1,16 +1,13 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AIGuideResponse, Phase, UserPreferences } from '../types';
 import { buildSystemPrompt, buildUserMessage } from '../נתונים/prompts';
 import { getFallbackStep } from '../נתונים/guided-content';
 
-let genAI: GoogleGenerativeAI | null = null;
+const OPENAI_MODEL = 'gpt-5';
+const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
-function getAI(): GoogleGenerativeAI | null {
-  if (genAI) return genAI;
-  const key = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!key) return null;
-  genAI = new GoogleGenerativeAI(key);
-  return genAI;
+function getOpenAIKey(): string | null {
+  const key = import.meta.env.VITE_OPENAI_API_KEY;
+  return (typeof key === 'string' && key.length > 0) ? key : null;
 }
 
 function getPhaseFromTension(t: number): Phase {
@@ -21,7 +18,6 @@ function getPhaseFromTension(t: number): Phase {
 }
 
 function fallbackResponse(_phase: Phase, tension: number, stepIndex: number, prefs: UserPreferences): AIGuideResponse {
-  // Content phase is determined by current tension — smooth progression
   const contentPhase = getPhaseFromTension(tension);
   const content = getFallbackStep(contentPhase, stepIndex, prefs.hasToy);
   const newTension = Math.min(100, tension + 4);
@@ -37,6 +33,19 @@ function fallbackResponse(_phase: Phase, tension: number, stepIndex: number, pre
   };
 }
 
+/** Extract JSON from a model response, even if wrapped in markdown */
+function extractJson(text: string): string {
+  const trimmed = text.trim();
+  // strip ```json … ``` or ``` … ``` fences if present
+  const fenceMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenceMatch) return fenceMatch[1].trim();
+  // grab first { ... last }
+  const first = trimmed.indexOf('{');
+  const last = trimmed.lastIndexOf('}');
+  if (first >= 0 && last > first) return trimmed.slice(first, last + 1);
+  return trimmed;
+}
+
 export async function getNextGuidance(
   preferences: UserPreferences,
   phase: Phase,
@@ -44,42 +53,56 @@ export async function getNextGuidance(
   stepIndex: number,
   history: string[]
 ): Promise<AIGuideResponse> {
-  const ai = getAI();
-  if (!ai) {
+  const key = getOpenAIKey();
+  if (!key) {
     return fallbackResponse(phase, tension, stepIndex, preferences);
   }
 
   try {
-    const model = ai.getGenerativeModel({
-      model: 'gemini-2.0-flash',
-      generationConfig: {
-        temperature: 0.9,
-        maxOutputTokens: 500,
-        responseMimeType: 'application/json',
-      },
-    });
-
     const systemPrompt = buildSystemPrompt(preferences);
     const userMessage = buildUserMessage(phase, tension, stepIndex, history);
 
-    const chat = model.startChat({
-      history: [{ role: 'user', parts: [{ text: 'הבנתי את התפקיד שלי. אני מוכנה להנחות.' }] },
-               { role: 'model', parts: [{ text: '{"currentInstruction":"אני כאן בשבילך. נתחיל.","whisper":"","bodyArea":"","tension":0,"phase":"ICE","readyToCall":false}' }] }],
-      systemInstruction: systemPrompt,
+    const response = await fetch(OPENAI_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage },
+        ],
+        temperature: 1.0,
+        max_tokens: 800,
+        response_format: { type: 'json_object' },
+      }),
     });
 
-    const result = await chat.sendMessage(userMessage);
-    const text = result.response.text();
-    const parsed = JSON.parse(text) as AIGuideResponse;
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error('OpenAI API error:', response.status, errText);
+      return fallbackResponse(phase, tension, stepIndex, preferences);
+    }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+    if (!content) {
+      console.error('OpenAI returned no content');
+      return fallbackResponse(phase, tension, stepIndex, preferences);
+    }
+
+    const parsed = JSON.parse(extractJson(content)) as AIGuideResponse;
 
     // Validate and clamp tension
-    parsed.tension = Math.max(0, Math.min(100, parsed.tension));
+    parsed.tension = Math.max(0, Math.min(100, parsed.tension ?? tension + 6));
     if (!parsed.phase) parsed.phase = phase;
     if (parsed.tension >= 95) parsed.readyToCall = true;
 
     return parsed;
   } catch (err) {
-    console.error('AI Guide error:', err);
+    console.error('AI Guide error (GPT):', err);
     return fallbackResponse(phase, tension, stepIndex, preferences);
   }
 }
