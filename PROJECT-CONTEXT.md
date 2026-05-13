@@ -25,7 +25,28 @@ PASSWORD (1900) → WELCOME → BREATH (דלגי אפשרי) → JOURNEY (popup 
 - מובייל responsive ✅
 - Deploy אוטומטי ל-GitHub Pages ✅
 
-## עדכונים אחרונים (שיחה 4 — 2026-03-11)
+## עדכונים אחרונים (שיחה 5 — 2026-05-13)
+
+### שדרוג עיצוב + UX עם 3 מוחות (Claude + Codex + Gemini 3.1 Pro)
+- **Glass card משודרג**: `saturate(160%)` + inset shadow → "milled premium glass" ✅
+- **חשיפת טקסט מעושנת**: `blur(8px)` במקום fade שטוח ✅
+- **כפתורים עם spring physics**: `cubic-bezier(0.16, 1, 0.3, 1)` + scale active ✅
+- **לחישות בעיצוב כפול**: serif + neon drop-shadow ✅
+- **Film grain SVG**: שכבת רעש מעל הרקעים ✅
+- **צורות אורגניות**: morph border-radius לעיגול שלב פעיל ✅
+- **PhaseProgress**: פחות תחרותי, יותר זורם, ללא אחוזים ✅
+- **WelcomeScreen**: `text-4xl font-extralight` במקום `text-2xl` ✅
+- **PasswordScreen**: microcopy אישית ("רגע שלך בלבד") + haptic vibration ✅
+- **Screen transitions**: fade+blur בין מסכים מותקנים ✅
+- **ActionButton**: haptic ב-12ms בכל לחיצה ✅
+- **AmbientBackground**: פחות חלקיקים (7 במקום 12), drifting glow לפי phase ✅
+
+### Deploy
+- Commit `fe1a264` ב-main ✅
+- gh-pages עודכן בהצלחה ✅
+- URL: https://raniv123.github.io/RRXO/
+
+## עדכונים קודמים (שיחה 4 — 2026-03-11)
 
 ### שדרוג חוויה מלא
 - הוסרו שמות (name + partnerName) — לא צריך ✅
@@ -53,5 +74,5 @@ PASSWORD (1900) → WELCOME → BREATH (דלגי אפשרי) → JOURNEY (popup 
 3. לוודא סיום הדרגתי עובד
 
 ---
-📅 עדכון אחרון: 2026-03-11 20:00
-💬 שיחה אחרונה: הסרת שמות, popup צעצוע באמצע WARM, סיום הדרגתי
+📅 עדכון אחרון: 2026-05-13 17:35
+💬 שיחה אחרונה: שדרוג עיצוב + UX עם סקירת 3 מוחות (Claude + Codex + Gemini 3.1 Pro)
