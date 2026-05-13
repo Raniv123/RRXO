@@ -18,6 +18,7 @@ html, body, #root {
   direction: rtl;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Prevent zoom on input focus (iOS) */
@@ -43,88 +44,170 @@ input, select, textarea {
   color: white;
 }
 
-/* Glass card */
+/* === GLASS — milled premium glass with depth === */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.01) 100%);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 22px;
+  box-shadow:
+    0 16px 40px -10px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.02);
 }
 
-/* Action button */
+/* === ACTION BUTTON — spring physics, premium === */
 .action-btn {
-  background: linear-gradient(135deg, rgba(180,40,80,0.85), rgba(120,20,60,0.95));
-  box-shadow: 0 0 50px rgba(180,40,80,0.35), 0 4px 20px rgba(0,0,0,0.5);
-  border: 1px solid rgba(180,40,80,0.4);
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(180,40,80,0.88), rgba(120,20,60,0.96));
+  box-shadow:
+    0 0 50px rgba(180,40,80,0.35),
+    0 8px 28px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+  border: 1px solid rgba(220,80,120,0.35);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
 }
 .action-btn:hover {
-  box-shadow: 0 0 70px rgba(180,40,80,0.5), 0 4px 30px rgba(0,0,0,0.6);
-  transform: translateY(-2px);
+  box-shadow:
+    0 0 80px rgba(180,40,80,0.45),
+    0 14px 40px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1px 0 rgba(0,0,0,0.25);
+  transform: translateY(-3px) scale(1.015);
 }
 .action-btn:active {
-  transform: translateY(0);
+  transition: all 0.1s ease;
+  transform: translateY(1px) scale(0.985);
 }
 
-/* Secondary button */
+/* === SECONDARY BUTTON === */
 .secondary-btn {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+.secondary-btn:active {
+  transform: translateY(0) scale(0.98);
+  transition: all 0.1s ease;
 }
 
-/* Phase backgrounds */
+/* === PHASE BACKGROUNDS — deeper, more cinematic === */
 .bg-ice {
-  background: radial-gradient(ellipse at 30% 40%, #0d0820 0%, #050510 50%, #0a0a14 100%);
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 30%, rgba(34,80,140,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse at 50% 50%, #0d0820 0%, #050510 55%, #08080f 100%);
 }
 .bg-warm {
-  background: radial-gradient(ellipse at 40% 50%, #1a0530 0%, #0d0520 40%, #0a0a14 100%);
+  background:
+    radial-gradient(ellipse 80% 60% at 40% 40%, rgba(168,85,247,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse at 50% 50%, #1a0530 0%, #0d0520 45%, #08080f 100%);
 }
 .bg-hot {
-  background: radial-gradient(ellipse at 50% 60%, #2a0520 0%, #1a0818 40%, #0a0a14 100%);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(236,72,153,0.22) 0%, transparent 70%),
+    radial-gradient(ellipse at 50% 60%, #2a0520 0%, #1a0818 40%, #08080f 100%);
 }
 .bg-fire {
-  background: radial-gradient(ellipse at 50% 50%, #3a0818 0%, #2a0510 35%, #0a0a14 100%);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(239,68,68,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse at 50% 50%, #3a0818 0%, #2a0510 35%, #08080f 100%);
 }
 
-/* Breath circle */
+/* === FILM GRAIN — subtle noise texture === */
+.film-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* === BREATH CIRCLE === */
 .breath-expand {
   animation: breathExpand 16s ease-in-out infinite;
 }
 @keyframes breathExpand {
   0%   { transform: scale(0.8); opacity: 0.5; }
-  25%  { transform: scale(1.2); opacity: 0.9; }  /* inhale 4s */
-  50%  { transform: scale(1.2); opacity: 0.9; }  /* hold 4s */
-  100% { transform: scale(0.8); opacity: 0.5; }  /* exhale 8s */
+  25%  { transform: scale(1.2); opacity: 0.9; }
+  50%  { transform: scale(1.2); opacity: 0.9; }
+  100% { transform: scale(0.8); opacity: 0.5; }
 }
 
-/* Guided text word animation */
+/* === SMOKY WORD APPEAR — emerges from mist === */
 .word-appear {
-  animation: wordAppear 0.4s ease-out forwards;
+  animation: wordAppear 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   opacity: 0;
+  will-change: opacity, transform, filter;
 }
 @keyframes wordAppear {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  0%   { opacity: 0; filter: blur(8px); transform: translateY(10px) scale(0.985); }
+  60%  { opacity: 0.85; filter: blur(1px); }
+  100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
 }
 
-/* Floating particles */
+/* === ORGANIC MORPH — for active phase indicators === */
+@keyframes organicMorph {
+  0%, 100% { border-radius: 48% 52% 60% 40% / 50% 45% 55% 50%; }
+  33%      { border-radius: 60% 40% 45% 55% / 45% 60% 40% 55%; }
+  66%      { border-radius: 42% 58% 55% 45% / 55% 50% 50% 45%; }
+}
+.morph-shape {
+  animation: organicMorph 8s ease-in-out infinite;
+}
+
+/* === SCREEN FADE — between mounted screens === */
+.screen-fade {
+  animation: screenFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes screenFadeIn {
+  0%   { opacity: 0; filter: blur(6px); transform: scale(0.99); }
+  100% { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+
+/* === FLOATING PARTICLES === */
 .particle {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
+  filter: blur(0.5px);
 }
 
-/* Safe area for iPhone notch */
+/* === GLOW HALO — soft luxury halo === */
+.halo {
+  position: relative;
+}
+.halo::before {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(circle, rgba(180,40,80,0.18) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* === iOS safe area === */
 @supports (padding: env(safe-area-inset-top)) {
   body {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* === Respect reduced motion === */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

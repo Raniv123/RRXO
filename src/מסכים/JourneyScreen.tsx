@@ -264,12 +264,12 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
                 }`} />
               </div>
 
-              {/* Fantasy story */}
+              {/* Fantasy story — dramatic typography */}
               <GlassCard className="!p-8">
                 <GuidedText
                   text={current.currentInstruction}
-                  speed={phase === 'ICE' ? 70 : phase === 'WARM' ? 60 : 50}
-                  className="text-xl font-light text-white leading-relaxed text-center"
+                  speed={phase === 'ICE' ? 80 : phase === 'WARM' ? 65 : 55}
+                  className="text-[26px] font-extralight text-white/95 leading-[1.7] tracking-tight text-center"
                   onDone={() => setTextDone(true)}
                 />
               </GlassCard>
@@ -332,10 +332,18 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
                 </div>
               )}
 
-              {/* Whisper */}
+              {/* Whisper — serif, neon halo, intimate */}
               {textDone && current.whisper && (
-                <p className="text-center text-sexy-fuchsia/50 text-sm italic animate-fade-in">
-                  "{current.whisper}"
+                <p
+                  className="text-center text-sm italic animate-fade-in tracking-widest"
+                  style={{
+                    fontFamily: 'Georgia, "Times New Roman", serif',
+                    color: 'rgba(232,121,249,0.78)',
+                    textShadow: '0 0 14px rgba(232,121,249,0.45), 0 0 28px rgba(232,121,249,0.15)',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  {current.whisper}
                 </p>
               )}
             </div>

@@ -87,13 +87,13 @@ export default function WelcomeScreen({ onStart }: Props) {
             </div>
           </div>
 
-          {/* Title */}
-          <h1 className={`text-2xl font-light text-white transition-all duration-1000 delay-300 ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          {/* Title — dramatic hierarchy */}
+          <h1 className={`text-4xl font-extralight text-white/95 tracking-tight leading-tight transition-all duration-1000 delay-300 ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             ערב טוב, יפה
           </h1>
 
-          {/* Subtitle */}
-          <p className={`text-base text-white/50 font-light transition-all duration-1000 ${showSub ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          {/* Subtitle — tiny, faded, wide tracking */}
+          <p className={`text-xs text-white/40 font-light tracking-[0.18em] mt-1 transition-all duration-1000 ${showSub ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             לפני שמתחילות — כמה דברים קטנים שישנו הכל
           </p>
 

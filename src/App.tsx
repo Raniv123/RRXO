@@ -12,6 +12,15 @@ function getInitialScreen(): Screen {
   return giftSeen ? 'PASSWORD' : 'GIFT_BOX';
 }
 
+/** Smooth screen wrapper — fade + light blur between mounted screens */
+function ScreenWrap({ children, screenKey }: { children: React.ReactNode; screenKey: Screen }) {
+  return (
+    <div key={screenKey} className="screen-fade h-full w-full">
+      {children}
+    </div>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>(getInitialScreen);
   const [preferences, setPreferences] = useState<UserPreferences>({ hasToy: false });
@@ -33,33 +42,45 @@ export default function App() {
   return (
     <div className="h-full w-full overflow-hidden font-heebo">
       {screen === 'GIFT_BOX' && (
-        <GiftBoxScreen onDone={handleGiftDone} />
+        <ScreenWrap screenKey="GIFT_BOX">
+          <GiftBoxScreen onDone={handleGiftDone} />
+        </ScreenWrap>
       )}
 
       {screen === 'PASSWORD' && (
-        <PasswordScreen onUnlock={() => setScreen('WELCOME')} />
+        <ScreenWrap screenKey="PASSWORD">
+          <PasswordScreen onUnlock={() => setScreen('WELCOME')} />
+        </ScreenWrap>
       )}
 
       {screen === 'WELCOME' && (
-        <WelcomeScreen onStart={() => setScreen('BREATH')} />
+        <ScreenWrap screenKey="WELCOME">
+          <WelcomeScreen onStart={() => setScreen('BREATH')} />
+        </ScreenWrap>
       )}
 
       {screen === 'BREATH' && (
-        <BreathScreen onComplete={() => setScreen('JOURNEY')} />
+        <ScreenWrap screenKey="BREATH">
+          <BreathScreen onComplete={() => setScreen('JOURNEY')} />
+        </ScreenWrap>
       )}
 
       {screen === 'JOURNEY' && (
-        <JourneyScreen
-          preferences={preferences}
-          onToyChoice={handleToyChoice}
-          onCallHim={() => setScreen('CALL_HIM')}
-        />
+        <ScreenWrap screenKey="JOURNEY">
+          <JourneyScreen
+            preferences={preferences}
+            onToyChoice={handleToyChoice}
+            onCallHim={() => setScreen('CALL_HIM')}
+          />
+        </ScreenWrap>
       )}
 
       {screen === 'CALL_HIM' && (
-        <CallHimScreen
-          onRestart={handleRestart}
-        />
+        <ScreenWrap screenKey="CALL_HIM">
+          <CallHimScreen
+            onRestart={handleRestart}
+          />
+        </ScreenWrap>
       )}
     </div>
   );
