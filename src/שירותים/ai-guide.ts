@@ -2,11 +2,13 @@ import { AIGuideResponse, Phase, UserPreferences } from '../types';
 import { buildSystemPrompt, buildUserMessage } from '../נתונים/prompts';
 import { getFallbackStep } from '../נתונים/guided-content';
 
-const OPENAI_MODEL = 'gpt-5';
-const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+// FAL acts as a proxy to OpenAI — keeps the OpenAI key out of the client bundle.
+// Using any-llm which routes to GPT-5 / GPT-4o through FAL's infra.
+const FAL_ENDPOINT = 'https://fal.run/fal-ai/any-llm';
+const MODEL = 'openai/gpt-5';
 
-function getOpenAIKey(): string | null {
-  const key = import.meta.env.VITE_OPENAI_API_KEY;
+function getFalKey(): string | null {
+  const key = import.meta.env.VITE_FAL_KEY;
   return (typeof key === 'string' && key.length > 0) ? key : null;
 }
 
@@ -36,10 +38,8 @@ function fallbackResponse(_phase: Phase, tension: number, stepIndex: number, pre
 /** Extract JSON from a model response, even if wrapped in markdown */
 function extractJson(text: string): string {
   const trimmed = text.trim();
-  // strip ```json … ``` or ``` … ``` fences if present
   const fenceMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fenceMatch) return fenceMatch[1].trim();
-  // grab first { ... last }
   const first = trimmed.indexOf('{');
   const last = trimmed.lastIndexOf('}');
   if (first >= 0 && last > first) return trimmed.slice(first, last + 1);
@@ -53,7 +53,7 @@ export async function getNextGuidance(
   stepIndex: number,
   history: string[]
 ): Promise<AIGuideResponse> {
-  const key = getOpenAIKey();
+  const key = getFalKey();
   if (!key) {
     return fallbackResponse(phase, tension, stepIndex, preferences);
   }
@@ -62,47 +62,41 @@ export async function getNextGuidance(
     const systemPrompt = buildSystemPrompt(preferences);
     const userMessage = buildUserMessage(phase, tension, stepIndex, history);
 
-    const response = await fetch(OPENAI_ENDPOINT, {
+    const response = await fetch(FAL_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`,
+        'Authorization': `Key ${key}`,
       },
       body: JSON.stringify({
-        model: OPENAI_MODEL,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userMessage },
-        ],
-        temperature: 1.0,
-        max_tokens: 800,
-        response_format: { type: 'json_object' },
+        model: MODEL,
+        system_prompt: systemPrompt,
+        prompt: userMessage,
       }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('OpenAI API error:', response.status, errText);
+      console.error('FAL API error:', response.status, errText);
       return fallbackResponse(phase, tension, stepIndex, preferences);
     }
 
     const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
+    const content = data?.output ?? data?.text ?? data?.response ?? '';
     if (!content) {
-      console.error('OpenAI returned no content');
+      console.error('FAL returned no content:', data);
       return fallbackResponse(phase, tension, stepIndex, preferences);
     }
 
     const parsed = JSON.parse(extractJson(content)) as AIGuideResponse;
 
-    // Validate and clamp tension
     parsed.tension = Math.max(0, Math.min(100, parsed.tension ?? tension + 6));
     if (!parsed.phase) parsed.phase = phase;
     if (parsed.tension >= 95) parsed.readyToCall = true;
 
     return parsed;
   } catch (err) {
-    console.error('AI Guide error (GPT):', err);
+    console.error('AI Guide error (FAL):', err);
     return fallbackResponse(phase, tension, stepIndex, preferences);
   }
 }

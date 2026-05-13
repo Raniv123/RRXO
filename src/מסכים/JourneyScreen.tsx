@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { UserPreferences, Phase, AIGuideResponse } from '../types';
 import { getNextGuidance } from '../שירותים/ai-guide';
-import { resetFantasy, switchFantasy } from '../נתונים/guided-content';
+import { resetFantasy, switchFantasy, getCurrentFantasyName } from '../נתונים/guided-content';
 import AmbientBackground from '../רכיבים/AmbientBackground';
+import AmbientAudio from '../רכיבים/AmbientAudio';
 import PhaseProgress from '../רכיבים/PhaseProgress';
 import GlassCard from '../רכיבים/GlassCard';
 import GuidedText from '../רכיבים/GuidedText';
@@ -127,6 +128,9 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
   const [timerDone, setTimerDone] = useState(false);
   const [timerKey, setTimerKey] = useState(0);
 
+  // Track current fantasy id for ambient audio
+  const [currentFantasyId, setCurrentFantasyId] = useState<string>('');
+
   // Refs
   const tensionRef = useRef(tension);
   const phaseRef = useRef(phase);
@@ -188,7 +192,7 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
     if (mountedRef.current) return;
     mountedRef.current = true;
     resetFantasy();
-    loadGuidance();
+    loadGuidance().then(() => setCurrentFantasyId(getCurrentFantasyName()));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -216,6 +220,7 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
   return (
     <div className="relative h-full flex flex-col">
       <AmbientBackground phase={phase} />
+      <AmbientAudio fantasyId={currentFantasyId} />
 
       <div className="relative z-10 flex flex-col h-full">
         {/* Header */}
@@ -228,6 +233,7 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
               switchFantasy();
               setStepIndex(0);
               setHistory([]);
+              setCurrentFantasyId(getCurrentFantasyName());
               loadGuidance(tension, phase);
             }}
             disabled={loading}
