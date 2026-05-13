@@ -176,11 +176,8 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
         setTimeout(() => setShowToyPopup(true), 2000);
       }
 
-      // readyToCall → go to call screen
-      if (response.readyToCall) {
-        setTimeout(() => onCallHim(), 4000);
-      }
-
+      // readyToCall → manual button shown instead of auto-advance
+      // (her choice to advance — last moment of agency)
     } catch {
       // Fallback handled in ai-guide
     } finally {
@@ -413,6 +410,31 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
           )}
         </div>
 
+        {/* Final manual button — appears when she's reached the peak */}
+        {!showToyPopup && current?.readyToCall && (
+          <div className="px-5 pb-10 animate-fade-in" style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom, 0px))' }}>
+            <div className="max-w-md mx-auto">
+              <button
+                onClick={onCallHim}
+                className="w-full py-5 rounded-2xl text-white text-xl font-light transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] tracking-wide"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(239,68,68,0.4) 0%, rgba(180,40,80,0.5) 100%)',
+                  border: '1px solid rgba(239,68,68,0.4)',
+                  boxShadow: '0 0 60px rgba(239,68,68,0.3), 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.18)',
+                }}
+              >
+                קראי לו עכשיו ←
+              </button>
+              <p
+                className="text-center text-[11px] tracking-[0.24em] text-white/40 mt-4"
+                style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic' }}
+              >
+                את מוכנה
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Bottom actions — always available, she chooses when to continue */}
         {!showToyPopup && !current?.readyToCall && (
           <div className="px-5 flex flex-col gap-2.5" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 0px))' }}>
@@ -426,8 +448,8 @@ export default function JourneyScreen({ preferences, onToyChoice, onCallHim }: P
               </ActionButton>
             </div>
 
-            {/* Early "call him" option — appears once she's warmed up */}
-            {tension >= 40 && (
+            {/* Early "call him" option — only from HOT phase onward */}
+            {tension >= 50 && (
               <div className="max-w-md mx-auto w-full animate-fade-in">
                 <button
                   onClick={onCallHim}

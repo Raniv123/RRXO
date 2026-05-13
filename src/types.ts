@@ -1,9 +1,11 @@
-export type Screen = 'GIFT_BOX' | 'PASSWORD' | 'WELCOME' | 'BREATH' | 'JOURNEY' | 'CALL_HIM';
+export type Screen = 'GIFT_BOX' | 'PASSWORD' | 'NAMES' | 'WELCOME' | 'BREATH' | 'JOURNEY' | 'CALL_HIM';
 
 export type Phase = 'ICE' | 'WARM' | 'HOT' | 'FIRE';
 
 export interface UserPreferences {
   hasToy: boolean;
+  userName?: string;
+  partnerName?: string;
 }
 
 export interface GuidedStep {

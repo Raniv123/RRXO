@@ -7,7 +7,6 @@ interface Props {
 
 const CORRECT_PIN = '2626';
 
-/** Tiny vibration if device supports it — feels physical */
 function buzz(ms = 12) {
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
     try { navigator.vibrate(ms); } catch { /* ignore */ }
@@ -28,16 +27,16 @@ export default function PasswordScreen({ onUnlock }: Props) {
 
     if (newPin.length === 4) {
       if (newPin === CORRECT_PIN) {
-        buzz(30);
-        setTimeout(() => onUnlock(), 300);
+        buzz(35);
+        setTimeout(() => onUnlock(), 350);
       } else {
-        buzz(50);
+        buzz(55);
         setShake(true);
         setError(true);
         setTimeout(() => {
           setPin('');
           setShake(false);
-        }, 600);
+        }, 700);
       }
     }
   };
@@ -49,81 +48,102 @@ export default function PasswordScreen({ onUnlock }: Props) {
   };
 
   return (
-    <div className="relative h-full flex flex-col items-center justify-center screen-fade">
+    <div className="relative h-full flex flex-col items-center justify-center px-6 screen-fade">
       <AmbientBackground phase="ICE" />
 
-      <div className="relative z-10 flex flex-col items-center gap-8 px-6">
-        {/* Lock icon with halo */}
-        <div className="halo">
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center"
-            style={{
-              background: 'radial-gradient(circle, rgba(180,40,80,0.22) 0%, transparent 70%)',
-              boxShadow: '0 0 40px rgba(180,40,80,0.15)',
-            }}
-          >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2.5" ry="2.5" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Intimate microcopy */}
-        <div className="text-center flex flex-col gap-1.5 -mt-2">
-          <p
-            className="text-xs tracking-[0.22em] uppercase"
-            style={{
-              fontFamily: 'Georgia, "Times New Roman", serif',
-              color: error ? 'rgba(248,113,113,0.85)' : 'rgba(255,255,255,0.45)',
-              transition: 'color 300ms ease',
-              letterSpacing: '0.18em',
-            }}
-          >
-            {error ? 'לא מדויק. נסי שוב.' : 'רגע שלך בלבד'}
-          </p>
-        </div>
-
-        {/* Dots */}
-        <div className={`flex gap-4 ${shake ? 'animate-shake' : ''}`}>
-          {[0, 1, 2, 3].map(i => (
+      <div className="relative z-10 w-full max-w-sm">
+        {/* Glass container — matches inner app aesthetic */}
+        <div
+          className="glass !rounded-[28px] flex flex-col items-center gap-8 px-8 py-10"
+          style={{ background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%)' }}
+        >
+          {/* Halo with pulse */}
+          <div className="halo">
             <div
-              key={i}
-              className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${
-                i < pin.length
-                  ? error ? 'bg-red-500' : 'bg-warm-pink'
-                  : 'bg-white/10 border border-white/20'
-              }`}
+              className="w-16 h-16 rounded-full flex items-center justify-center morph-shape"
               style={{
-                boxShadow: i < pin.length && !error ? '0 0 14px rgba(180,40,80,0.55)' : 'none',
+                background: 'radial-gradient(circle, rgba(236,72,153,0.28) 0%, rgba(168,85,247,0.18) 50%, transparent 75%)',
+                boxShadow: '0 0 50px rgba(236,72,153,0.18), inset 0 1px 0 rgba(255,255,255,0.1)',
               }}
-            />
-          ))}
-        </div>
-
-        {/* Keypad */}
-        <div className="grid grid-cols-3 gap-4">
-          {['1','2','3','4','5','6','7','8','9','','0','←'].map((key) => (
-            <button
-              key={key || 'empty'}
-              onClick={() => {
-                if (key === '←') handleDelete();
-                else if (key) handleDigit(key);
-              }}
-              disabled={!key}
-              className={`w-16 h-16 rounded-full flex items-center justify-center text-xl
-                transition-all duration-200 ease-out select-none
-                ${!key ? 'invisible' : ''}
-                ${key === '←'
-                  ? 'text-white/40 hover:text-white/60 active:scale-90'
-                  : 'text-white/85 bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.16] border border-white/10 active:scale-90'
-                }
-              `}
-              style={key && key !== '←' ? { fontFamily: 'Heebo, sans-serif', fontWeight: 300 } : undefined}
             >
-              {key}
-            </button>
-          ))}
+              <div
+                className="w-2.5 h-2.5 rounded-full"
+                style={{
+                  background: 'rgba(236,72,153,0.95)',
+                  boxShadow: '0 0 18px rgba(236,72,153,0.7)',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Microcopy — sensual serif */}
+          <div className="text-center flex flex-col gap-1.5 -mt-2">
+            <p
+              className="text-[10px] tracking-[0.32em] uppercase"
+              style={{
+                fontFamily: 'Georgia, "Times New Roman", serif',
+                color: error ? 'rgba(248,113,113,0.9)' : 'rgba(255,255,255,0.35)',
+                transition: 'color 400ms ease',
+              }}
+            >
+              {error ? 'לא מדויק' : 'הערב שלך'}
+            </p>
+            <p className="text-xs text-white/35 font-light tracking-[0.14em]">
+              {error ? 'נסי שוב' : 'הקלידי קוד'}
+            </p>
+          </div>
+
+          {/* Dots */}
+          <div className={`flex gap-4 ${shake ? 'animate-shake' : ''}`}>
+            {[0, 1, 2, 3].map(i => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-full transition-all duration-300"
+                style={{
+                  background: i < pin.length
+                    ? error
+                      ? 'rgba(239,68,68,0.95)'
+                      : 'rgba(236,72,153,0.95)'
+                    : 'rgba(255,255,255,0.07)',
+                  border: i < pin.length ? 'none' : '1px solid rgba(255,255,255,0.16)',
+                  boxShadow: i < pin.length && !error ? '0 0 16px rgba(236,72,153,0.6)' : 'none',
+                  transform: i < pin.length ? 'scale(1.1)' : 'scale(1)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Keypad */}
+          <div className="grid grid-cols-3 gap-3.5">
+            {['1','2','3','4','5','6','7','8','9','','0','←'].map((key) => (
+              <button
+                key={key || 'empty'}
+                onClick={() => {
+                  if (key === '←') handleDelete();
+                  else if (key) handleDigit(key);
+                }}
+                disabled={!key}
+                className={`
+                  w-14 h-14 rounded-full flex items-center justify-center text-xl
+                  transition-all duration-200 ease-out select-none
+                  ${!key ? 'invisible' : ''}
+                  ${key === '←'
+                    ? 'text-white/35 hover:text-white/55 active:scale-90'
+                    : 'text-white/85 active:scale-90'
+                  }
+                `}
+                style={key && key !== '←' ? {
+                  fontFamily: 'Heebo, sans-serif',
+                  fontWeight: 300,
+                  background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 12px rgba(0,0,0,0.2)',
+                } : undefined}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

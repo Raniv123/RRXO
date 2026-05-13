@@ -2,17 +2,42 @@ import { useState, useCallback } from 'react';
 import { Screen, UserPreferences } from './types';
 import GiftBoxScreen from './מסכים/GiftBoxScreen';
 import PasswordScreen from './מסכים/PasswordScreen';
+import NamesScreen from './מסכים/NamesScreen';
 import WelcomeScreen from './מסכים/WelcomeScreen';
 import BreathScreen from './מסכים/BreathScreen';
 import JourneyScreen from './מסכים/JourneyScreen';
 import CallHimScreen from './מסכים/CallHimScreen';
+
+interface SavedNames {
+  user: string;
+  partner: string;
+}
+
+function loadSavedNames(): SavedNames | null {
+  try {
+    const raw = localStorage.getItem('rrxo-names');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SavedNames;
+    if (typeof parsed.user === 'string' && typeof parsed.partner === 'string'
+        && parsed.user.trim() && parsed.partner.trim()) {
+      return parsed;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function saveNames(names: SavedNames) {
+  try { localStorage.setItem('rrxo-names', JSON.stringify(names)); } catch { /* ignore */ }
+}
 
 function getInitialScreen(): Screen {
   const giftSeen = localStorage.getItem('rrxo-gift-seen');
   return giftSeen ? 'PASSWORD' : 'GIFT_BOX';
 }
 
-/** Smooth screen wrapper — fade + light blur between mounted screens */
+/** Smooth screen wrapper */
 function ScreenWrap({ children, screenKey }: { children: React.ReactNode; screenKey: Screen }) {
   return (
     <div key={screenKey} className="screen-fade h-full w-full">
@@ -23,20 +48,40 @@ function ScreenWrap({ children, screenKey }: { children: React.ReactNode; screen
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>(getInitialScreen);
-  const [preferences, setPreferences] = useState<UserPreferences>({ hasToy: false });
+  const savedNames = loadSavedNames();
+  const [preferences, setPreferences] = useState<UserPreferences>({
+    hasToy: false,
+    userName: savedNames?.user,
+    partnerName: savedNames?.partner,
+  });
 
   const handleGiftDone = useCallback(() => {
     localStorage.setItem('rrxo-gift-seen', '1');
     setScreen('PASSWORD');
   }, []);
 
+  const handlePasswordUnlock = useCallback(() => {
+    // If names already saved, skip the names screen
+    if (savedNames?.user && savedNames?.partner) {
+      setScreen('WELCOME');
+    } else {
+      setScreen('NAMES');
+    }
+  }, [savedNames]);
+
+  const handleNamesDone = useCallback((userName: string, partnerName: string) => {
+    saveNames({ user: userName, partner: partnerName });
+    setPreferences(p => ({ ...p, userName, partnerName }));
+    setScreen('WELCOME');
+  }, []);
+
   const handleToyChoice = useCallback((hasToy: boolean) => {
-    setPreferences({ hasToy });
+    setPreferences(p => ({ ...p, hasToy }));
   }, []);
 
   const handleRestart = useCallback(() => {
     setScreen('WELCOME');
-    setPreferences({ hasToy: false });
+    setPreferences(p => ({ ...p, hasToy: false }));
   }, []);
 
   return (
@@ -49,7 +94,13 @@ export default function App() {
 
       {screen === 'PASSWORD' && (
         <ScreenWrap screenKey="PASSWORD">
-          <PasswordScreen onUnlock={() => setScreen('WELCOME')} />
+          <PasswordScreen onUnlock={handlePasswordUnlock} />
+        </ScreenWrap>
+      )}
+
+      {screen === 'NAMES' && (
+        <ScreenWrap screenKey="NAMES">
+          <NamesScreen onDone={handleNamesDone} />
         </ScreenWrap>
       )}
 

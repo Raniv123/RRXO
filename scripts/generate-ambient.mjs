@@ -23,35 +23,35 @@ const DURATION_SECONDS = 22;
 const SCENES = [
   {
     id: 'hotel-stranger',
-    prompt: 'Quiet upscale hotel bar at night, soft jazz piano in the distance, gentle glassware clinking, low murmur of conversation, intimate warm atmosphere, no music vocals',
+    prompt: 'Quiet hotel lounge at night, very soft distant murmur, faint glass clinking, gentle air conditioning hum, calm intimate atmosphere, no music',
   },
   {
     id: 'neighbor',
-    prompt: 'Warm summer night on a city balcony, distant traffic hum, gentle wind through trees, faint city sounds far away, intimate quiet atmosphere',
+    prompt: 'Warm summer night on a balcony, gentle wind through leaves, faint cricket sounds, distant city hum, peaceful atmosphere, no music',
   },
   {
     id: 'art-studio',
-    prompt: 'Peaceful art studio interior, very soft ambient instrumental music, subtle brush sounds, distant rain on a window, calm creative atmosphere',
+    prompt: 'Quiet art studio interior, soft brush strokes on canvas, faint rain on window, peaceful calm atmosphere, no music',
   },
   {
     id: 'private-spa',
-    prompt: 'Luxurious private spa, gentle water trickling, soft meditation music, warm steam ambient, relaxing atmosphere, no vocals',
+    prompt: 'Calm spa room, gentle water trickling from a small fountain, soft warm steam ambient, peaceful relaxing atmosphere, no music, no vocals',
   },
   {
     id: 'beach-sunset',
-    prompt: 'Tropical beach at sunset, gentle ocean waves lapping on shore, warm breeze, distant seabirds, calm and intimate atmosphere',
+    prompt: 'Tropical beach at sunset, gentle ocean waves lapping on shore, warm soft breeze, faint distant seabirds, peaceful calm atmosphere, no music',
   },
   {
     id: 'dance-lesson',
-    prompt: 'Empty dance studio at night, soft slow tango music in the background, wooden floor creaks subtly, intimate warm atmosphere',
+    prompt: 'Quiet wooden dance studio at night, soft footstep creaks on parquet floor, gentle breeze through open window, calm peaceful atmosphere, no music',
   },
   {
     id: 'intimate-dinner',
-    prompt: 'Upscale candlelit restaurant late evening, soft jazz background music, very faint distant conversation, gentle wine glass clinking, intimate atmosphere',
+    prompt: 'Upscale restaurant late evening, very faint distant conversation murmur, gentle glass clinking, candle flicker, calm warm atmosphere, no music',
   },
   {
     id: 'rain-alley',
-    prompt: 'Cozy outdoor cafe terrace under a fabric awning during gentle rain, soft raindrops on canvas, warm muffled cafe sounds inside, soft acoustic music from inside, no thunder, intimate warm safe atmosphere',
+    prompt: 'Cozy outdoor cafe terrace under a fabric awning, soft steady rain on canvas, gentle water dripping, faint warm muffled sounds from inside, peaceful calm atmosphere, no thunder, no music',
   },
 ];
 
