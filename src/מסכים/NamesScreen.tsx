@@ -69,7 +69,7 @@ export default function NamesScreen({ onDone }: Props) {
           </p>
 
           <h1 className="text-3xl font-extralight text-white/95 leading-tight tracking-tight">
-            {step === 0 ? 'איך אקרא לך?' : `ומי על דעתך, ${userName}?`}
+            {step === 0 ? 'איך אקרא לך?' : 'ומה שם הגבר החלומי שלך?'}
           </h1>
 
           <p className="text-xs text-white/40 font-light tracking-[0.12em] mt-1">
